@@ -23,7 +23,7 @@ Test Runnerで単体テストが実行できる。
 MakeUityPackage.ps1を実行すると、カレントディレクトリにUnitypackageが生成される。
 
 ## ツールの使用方法
-https://docs.google.com/document/d/11EwowImem-9eus6zEt0yfsoCSD0-phpJnKTc5gxlIR8/edit?usp=sharing
+https://docs.google.com/document/d/1Vw_TKrDp99hofKdUmfMFO4ouJAMMqw8BZyQxM7Qp8LY/edit?usp=sharing
 
 ## Author
 
