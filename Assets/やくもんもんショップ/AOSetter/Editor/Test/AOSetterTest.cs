@@ -70,11 +70,20 @@ namespace Yakumo890.VRC.AOSetter.Test
                 setterWithNewAO.AvatarObject = avatar;
                 Assert.IsTrue(setterWithNewAO.ValidateSetting());
 
+                //親がいないと無効
                 setterWithNewAO.NewAnchorObjectParent = null;
                 Assert.IsFalse(setterWithNewAO.ValidateSetting());
 
+                //アバターがないと無効
                 setterWithNewAO.NewAnchorObjectParent = new GameObject();
                 setterWithNewAO.AvatarObject = null;
+                Assert.IsFalse(setterWithNewAO.ValidateSetting());
+
+                setterWithNewAO.AnchorObject = setterWithNewAO.AvatarObject;
+                //オブジェクトの名前が無いと無効
+                setterWithNewAO.NewAnchorObjectName = "";
+                Assert.IsFalse(setterWithNewAO.ValidateSetting());
+                setterWithNewAO.NewAnchorObjectName = null;
                 Assert.IsFalse(setterWithNewAO.ValidateSetting());
             }
         }
@@ -121,7 +130,22 @@ namespace Yakumo890.VRC.AOSetter.Test
             // ----すでにあるアンカーオブジェクトを設定する場合----
             {
                 var setterWithAO = new AOSetterEngine();
+                setterWithAO.WillCreateNewAnchorObject = false;
+
                 var avatar = CreateTestAvatar();
+
+                //アバターがないので失敗する
+                Assert.IsFalse(setterWithAO.SetAnchorOverride());
+
+                setterWithAO.AvatarObject = avatar;
+
+                //アンカーオブジェクトが無いので失敗する
+                Assert.IsFalse(setterWithAO.SetAnchorOverride());
+
+                //アンカーオブジェクトはあるが、アバターがないので失敗する
+                setterWithAO.AvatarObject = null;
+                Assert.IsFalse(setterWithAO.SetAnchorOverride());
+
                 setterWithAO.AvatarObject = avatar;
 
                 var ao = new GameObject();
@@ -129,23 +153,46 @@ namespace Yakumo890.VRC.AOSetter.Test
                 ao.transform.SetParent(avatar.transform);
                 setterWithAO.AnchorObject = ao;
 
-                setterWithAO.SetAnchorOverride();
+                Assert.IsTrue(setterWithAO.SetAnchorOverride());
+
+                //アンカーオブジェクトが設定されているか
                 Assert.IsTrue(CheckAnchorOverride(avatar, ao));
             }
 
             // ----新規にアンカーオブジェクトを作って設定する場合----
             {
+                const string aoObjectName = "AO";
+
                 var setterWithNewAO = new AOSetterEngine();
+                setterWithNewAO.WillCreateNewAnchorObject = true;
+
                 var avatar = CreateTestAvatar();
                 setterWithNewAO.AvatarObject = avatar;
 
-                setterWithNewAO.WillCreateNewAnchorObject = true;
-                setterWithNewAO.NewAnchorObjectVector = new Vector3(1, 2, 3);
-                setterWithNewAO.NewAnchorObjectName = "AO";
+                //名前も親がなければ失敗
+                setterWithNewAO.NewAnchorObjectName = null;
+                setterWithNewAO.NewAnchorObjectParent = null;
+                
+                Assert.IsFalse(setterWithNewAO.SetAnchorOverride());
 
-                setterWithNewAO.SetAnchorOverride();
+                // 名前があっても親がなければ失敗
+                setterWithNewAO.NewAnchorObjectName = aoObjectName;
+                Assert.IsFalse(setterWithNewAO.SetAnchorOverride());
 
-                var ao = avatar.transform.Find("AO");
+                // 親がいても名前がなければ失敗
+                setterWithNewAO.NewAnchorObjectParent = setterWithNewAO.AvatarObject;
+                setterWithNewAO.NewAnchorObjectName = "";
+                Assert.IsFalse(setterWithNewAO.SetAnchorOverride());
+                setterWithNewAO.NewAnchorObjectName = null;
+                Assert.IsFalse(setterWithNewAO.SetAnchorOverride());
+
+                setterWithNewAO.NewAnchorObjectName = aoObjectName;
+                setterWithNewAO.NewAnchorObjectVector = new Vector3(1, 2, 3);                
+                
+                Assert.IsTrue(setterWithNewAO.SetAnchorOverride());
+
+                //アンカーオブジェクトが作られているか
+                var ao = avatar.transform.Find(aoObjectName);
                 Assert.IsNotNull(ao);
                 Assert.AreEqual(new Vector3(1, 2, 3), ao.transform.position);
 

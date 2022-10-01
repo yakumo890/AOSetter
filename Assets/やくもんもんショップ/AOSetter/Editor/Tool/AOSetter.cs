@@ -55,13 +55,26 @@ namespace Yakumo890.VRC.AOSetter
 
             if (m_engine.WillCreateNewAnchorObject)
             {
+                EditorGUI.BeginChangeCheck();
                 m_engine.NewAnchorObjectName = EditorGUILayout.TextField("アンカーオブジェクトの名前", m_engine.NewAnchorObjectName);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    m_enableButton = m_engine.ValidateSetting();
+                }
+
                 m_engine.NewAnchorObjectVector = EditorGUILayout.Vector3Field("アンカーオブジェクトのポジション", m_engine.NewAnchorObjectVector);
+
+                EditorGUI.BeginChangeCheck();
                 m_engine.NewAnchorObjectParent = EditorGUILayout.ObjectField(
                     "アンカーオブジェクトの親",
                     m_engine.NewAnchorObjectParent,
                     typeof(GameObject),
                     true) as GameObject;
+                if (EditorGUI.EndChangeCheck())
+                {
+                    m_enableButton = m_engine.ValidateSetting();
+                }
+
             }
             else
             {
@@ -237,10 +250,16 @@ namespace Yakumo890.VRC.AOSetter
 
             if (WillCreateNewAnchorObject)
             {
-                return NewAnchorObjectParent != null;
+                if (NewAnchorObjectName == null || NewAnchorObjectName == "")
+                {
+                    return false;
+                }
+                return NewAnchorObjectParent != null;               
             }
-
-            return AnchorObject != null;
+            else
+            {
+                return AnchorObject != null;
+            }
         }
 
         /// <summary>
@@ -324,7 +343,12 @@ namespace Yakumo890.VRC.AOSetter
         /// <returns>作成したアンカーオブジェクト</returns>
         private GameObject CreateNewAnchorObject()
         {
-            if (NewAnchorObjectParent)
+            if (NewAnchorObjectName == null || NewAnchorObjectName.Length == 0)
+            {
+                return null;
+            }
+
+            if (NewAnchorObjectParent == null)
             {
                 return null;
             }
