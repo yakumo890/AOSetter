@@ -62,7 +62,7 @@ namespace Yakumo890.VRC.AOSetter
                     m_enableButton = m_engine.ValidateSetting();
                 }
 
-                m_engine.NewAnchorObjectVector = EditorGUILayout.Vector3Field("アンカーオブジェクトのポジション", m_engine.NewAnchorObjectVector);
+                m_engine.NewAnchorObjectVector = EditorGUILayout.Vector3Field("アンカーオブジェクトのポジション(ローカル座標)", m_engine.NewAnchorObjectVector);
 
                 EditorGUI.BeginChangeCheck();
                 m_engine.NewAnchorObjectParent = EditorGUILayout.ObjectField(
@@ -356,7 +356,7 @@ namespace Yakumo890.VRC.AOSetter
             GameObject ao = new GameObject();
             ao.name = NewAnchorObjectName;
             ao.transform.SetParent(NewAnchorObjectParent.transform);
-            ao.transform.position = NewAnchorObjectVector;
+            ao.transform.localPosition = NewAnchorObjectVector;
 
             return ao;
         }

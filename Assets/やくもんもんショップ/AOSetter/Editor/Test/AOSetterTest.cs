@@ -194,7 +194,7 @@ namespace Yakumo890.VRC.AOSetter.Test
                 //アンカーオブジェクトが作られているか
                 var ao = avatar.transform.Find(aoObjectName);
                 Assert.IsNotNull(ao);
-                Assert.AreEqual(new Vector3(1, 2, 3), ao.transform.position);
+                Assert.AreEqual(new Vector3(1, 2, 3), ao.transform.localPosition);
 
                 Assert.IsTrue(CheckAnchorOverride(avatar, ao.gameObject));
             }
