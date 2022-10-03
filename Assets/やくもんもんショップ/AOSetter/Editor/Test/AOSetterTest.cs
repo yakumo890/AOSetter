@@ -22,18 +22,6 @@ namespace Yakumo890.VRC.AOSetter.Test
         }
 
         [Test]
-        public void HasAvatarTest()
-        {
-            var setter = new AOSetterEngine();
-
-            // 初期はアバターがない
-            Assert.IsFalse(setter.HasAvatar());
-
-            setter.AvatarObject = new GameObject();
-            Assert.IsTrue(setter.HasAvatar());
-        }
-
-        [Test]
         public void ValidateSettingTest()
         {
             var avatar = new GameObject();

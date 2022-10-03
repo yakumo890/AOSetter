@@ -38,7 +38,7 @@ namespace Yakumo890.VRC.AOSetter
 
             m_engine.AvatarObject = EditorGUILayout.ObjectField("対象のアバター", m_engine.AvatarObject, typeof(GameObject), true) as GameObject;
 
-            if (!m_engine.HasAvatar())
+            if (m_engine.AvatarObject == null)
             {
                 return;
             }
@@ -165,46 +165,26 @@ namespace Yakumo890.VRC.AOSetter
         }
 
         /// <value>設定予定のアンカーオブジェクト</value>
-        public GameObject AnchorObject
-        {
-            get;
-            set;
-        } = null;
+        public GameObject AnchorObject{ get; set; } = null;
 
         /// <value>アンカーオブジェクトを新規に作成するか</value>
-        public bool WillCreateNewAnchorObject
-        {
-            get;
-            set;
-        } = false;
+        public bool WillCreateNewAnchorObject{ get; set; } = false;
 
         /// <value>新規にアンカーオブジェクトの名前</value>
-        public string NewAnchorObjectName
-        {
-            get;
-            set;
-        } = "AnchorTarget";
+        public string NewAnchorObjectName{ get; set; } = "AnchorTarget";
         
         /// <value>新規のアンカーオブジェクトのposition</value>
-        public Vector3 NewAnchorObjectVector
-        {
-            get;
-            set;
-        } = new Vector3();
+        public Vector3 NewAnchorObjectVector{ get; set; } = new Vector3();
 
         /// <value>新規のアンカーオブジェクトの親</value>
-        public GameObject NewAnchorObjectParent
-        {
-            get;
-            set;
-        } = null;
+        public GameObject NewAnchorObjectParent{ get; set; } = null;
 
         /// <value>アバターのレンダラー一覧</value>        
         public List<Renderer> Renderers
         {
             get;
             private set;
-        } = new List<Renderer>();
+        }
 
         public AOSetterEngine()
         {
@@ -220,7 +200,7 @@ namespace Yakumo890.VRC.AOSetter
         {
             get
             {
-                return Renderers[index].probeAnchor?.gameObject;
+                return Renderers?[index].probeAnchor?.gameObject;
             }
             set
             {
@@ -229,28 +209,19 @@ namespace Yakumo890.VRC.AOSetter
         }
 
         /// <summary>
-        /// アバターがセットされているか
-        /// </summary>
-        /// <returns>true: セットされている<br/>false: セットされていない(null)</returns>
-        public bool HasAvatar()
-        {
-            return AvatarObject != null;
-        }
-
-        /// <summary>
         /// AOをセットするための設定が正常に行われているか
         /// </summary>
         /// <returns>true: 正常<br/>false: 正常でない</returns>
         public bool ValidateSetting()
         {
-            if (!HasAvatar())
+            if (AvatarObject == null)
             {
                 return false;
             }
 
             if (WillCreateNewAnchorObject)
             {
-                if (NewAnchorObjectName == null || NewAnchorObjectName == "")
+                if (string.IsNullOrEmpty(NewAnchorObjectName))
                 {
                     return false;
                 }
@@ -268,7 +239,7 @@ namespace Yakumo890.VRC.AOSetter
         /// <returns>true: セット完了<br/>false: セット失敗</returns>
         public bool SetAnchorOverride()
         {
-            if (!HasAvatar())
+            if (AvatarObject == null)
             {
                 return false;
             }
@@ -294,7 +265,7 @@ namespace Yakumo890.VRC.AOSetter
         /// </summary>
         public void LoadRenderers()
         {
-            if (!HasAvatar())
+            if (AvatarObject == null)
             {
                 return;
             }
@@ -343,7 +314,7 @@ namespace Yakumo890.VRC.AOSetter
         /// <returns>作成したアンカーオブジェクト</returns>
         private GameObject CreateNewAnchorObject()
         {
-            if (NewAnchorObjectName == null || NewAnchorObjectName.Length == 0)
+            if (string.IsNullOrWhiteSpace(NewAnchorObjectName))
             {
                 return null;
             }
